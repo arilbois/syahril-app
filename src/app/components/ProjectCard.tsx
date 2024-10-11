@@ -4,18 +4,13 @@ type ProjectCardProps = {
   imgUrl: string;
   title: string;
   description: string;
-  gitUrl: string;
-  previewUrl: string;
 };
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
   imgUrl,
   title,
   description,
-  gitUrl,
-  previewUrl,
 }) => {
-  console.log(gitUrl, previewUrl);
   return (
     <div>
       <div

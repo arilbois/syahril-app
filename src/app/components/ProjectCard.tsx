@@ -20,7 +20,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     <div>
       <div
         className="h-52 md:h-72 rounded-t-xl relative group"
-        style={{ background: `url(${imgUrl})`, backgroundSize: "cover" }}
+        style={{
+          backgroundImage: `url(${imgUrl})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        }}
       >
         {/* Content */}
       </div>

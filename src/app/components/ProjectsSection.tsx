@@ -11,7 +11,6 @@ import {
   APIResponse,
 } from "./types";
 
-// Fetch project data from the API
 const fetchProjects = async (): Promise<APIResponse<Project[]>> => {
   const { data } = await api.get('/projects');
   return data;

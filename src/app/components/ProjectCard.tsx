@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import ProjectModal from "./ProjectModal";
 import { Button } from "@/components/ui/button";
@@ -66,14 +64,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div className="text-[#ADB7BE] flex-1">
           <span>{truncatedText}</span>
           {isTruncated && (
-            <>...<Button
-              variant="link"
-              onClick={openModal}
-              aria-label="View More"
-              className="inline text-blue-500"
-            >
-              View More
-            </Button>
+            <>
+              ...<Button
+                variant="link"
+                onClick={openModal}
+                aria-label="View More"
+                className="inline text-blue-500"
+              >
+                View More
+              </Button>
             </>
           )}
         </div>
@@ -90,10 +89,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           ) : (
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger>
-                  <Button variant="ghost" disabled className="cursor-not-allowed opacity-50">
-                    <FaGithub className="mr-2" /> GitHub
-                  </Button>
+                <TooltipTrigger asChild>
+                  <span>
+                    <Button variant="ghost" disabled className="cursor-not-allowed opacity-50">
+                      <FaGithub className="mr-2" /> GitHub
+                    </Button>
+                  </span>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Link Not Available</p>
@@ -113,10 +114,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           ) : (
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger>
-                  <Button variant="ghost" disabled className="cursor-not-allowed opacity-50">
-                    <FaExternalLinkAlt className="mr-2" /> Live Preview
-                  </Button>
+                <TooltipTrigger asChild>
+                  <span>
+                    <Button variant="ghost" disabled className="cursor-not-allowed opacity-50">
+                      <FaExternalLinkAlt className="mr-2" /> Live Preview
+                    </Button>
+                  </span>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Link Not Available</p>

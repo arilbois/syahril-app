@@ -3,7 +3,14 @@
 import React, { useState } from "react";
 import ProjectModal from "./ProjectModal";
 import { Button } from "@/components/ui/button";
-import { FaGithub, FaExternalLinkAlt, FaEye } from "react-icons/fa";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
+
+import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 
 type ProjectCardProps = {
   imgUrl: string;
@@ -20,27 +27,28 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   gitUrl,
   previewUrl,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const maxDescriptionLength = 100; // Set the character limit here
+  const maxDescriptionLength = 180;
 
-  // Function to truncate HTML description text by plain text length
   const truncateHtmlText = (htmlText: string, maxLength: number) => {
     const tempElement = document.createElement("div");
     tempElement.innerHTML = htmlText;
     const plainText = tempElement.textContent || tempElement.innerText || "";
 
     if (plainText.length > maxLength) {
-      return plainText.slice(0, maxLength) + "...";
+      return {
+        truncatedText: plainText.slice(0, maxLength),
+        isTruncated: true,
+      };
     }
-    return htmlText; // return full HTML if within length
+    return { truncatedText: plainText, isTruncated: false };
   };
 
-  // Truncated HTML description
-  const truncatedDescription = truncateHtmlText(description, maxDescriptionLength);
+  const { truncatedText, isTruncated } = truncateHtmlText(description, maxDescriptionLength);
 
   return (
     <div className="bg-[#181818] rounded-xl overflow-hidden shadow-lg flex flex-col">
@@ -52,16 +60,24 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           backgroundPosition: "center",
         }}
         onClick={openModal}
-      >
-        {/* Optional: Add overlay or hover effects here */}
-      </div>
+      ></div>
       <div className="text-white rounded-b-xl mt-3 py-6 px-4 flex-1 flex flex-col">
         <h5 className="text-xl font-semibold mb-2">{title}</h5>
-        <p className="text-[#ADB7BE] flex-1">
-          <div dangerouslySetInnerHTML={{ __html: truncatedDescription }} />
-        </p>
-        <div className="mt-4 flex space-x-4">
-          {/* GitHub Button */}
+        <div className="text-[#ADB7BE] flex-1">
+          <span>{truncatedText}</span>
+          {isTruncated && (
+            <>...<Button
+              variant="link"
+              onClick={openModal}
+              aria-label="View More"
+              className="inline text-blue-500"
+            >
+              View More
+            </Button>
+            </>
+          )}
+        </div>
+        <div className="mt-4 flex justify-center space-x-4">
           {gitUrl ? (
             <a
               href={gitUrl}
@@ -72,12 +88,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <FaGithub className="mr-2" /> GitHub
             </a>
           ) : (
-            <Button variant="ghost" disabled className="cursor-not-allowed opacity-50">
-              <FaGithub className="mr-2" /> GitHub
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button variant="ghost" disabled className="cursor-not-allowed opacity-50">
+                    <FaGithub className="mr-2" /> GitHub
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Link Not Available</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
-
-          {/* Live Preview Button */}
           {previewUrl ? (
             <a
               href={previewUrl}
@@ -88,30 +111,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <FaExternalLinkAlt className="mr-2" /> Live Preview
             </a>
           ) : (
-            <Button variant="ghost" disabled className="cursor-not-allowed opacity-50">
-              <FaExternalLinkAlt className="mr-2" /> Live Preview
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button variant="ghost" disabled className="cursor-not-allowed opacity-50">
+                    <FaExternalLinkAlt className="mr-2" /> Live Preview
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Link Not Available</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
-
-          {/* View Details Button */}
-          <Button
-            variant="ghost"
-            onClick={openModal}
-            aria-label="View Details"
-            className="flex items-center"
-          >
-            <FaEye className="h-5 w-5" />
-          </Button>
         </div>
       </div>
-
-      {/* Project Modal */}
       <ProjectModal
         isOpen={isModalOpen}
         onClose={closeModal}
         imgUrl={imgUrl}
         title={title}
-        description={description} // Pass full description to modal
+        description={description}
         gitUrl={gitUrl}
         previewUrl={previewUrl}
       />

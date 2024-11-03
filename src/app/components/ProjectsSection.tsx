@@ -66,7 +66,7 @@ const ProjectsSection: React.FC = () => {
           isSelected={tag === "Frontend"}
         />
       </div>
-      <ul ref={ref} className="grid md:grid-cols-3 gap-8 md:gap-12">
+      <ul ref={ref} className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
         {filteredProjects.map((project: Project, index: number) => (
           <motion.li
             key={project.id}

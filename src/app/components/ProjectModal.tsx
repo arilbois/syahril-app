@@ -6,7 +6,6 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
@@ -33,13 +32,11 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
 }) => {
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            {/* Set full width for mobile, max width on larger screens */}
-            <DialogContent className="w-full max-w-4xl p-4 sm:p-6 overflow-y-auto max-h-[90vh]">
+            <DialogContent className="w-full max-w-4xl p-4 sm:p-6 overflow-y-auto max-h-[90vh] bg-gray-800 dark:bg-gray-900 text-white rounded-lg shadow-lg transition-all">
                 <DialogHeader className="flex justify-between items-center">
-                    <DialogTitle>{title}</DialogTitle>
+                    <DialogTitle className="text-lg font-semibold text-white">{title}</DialogTitle>
                 </DialogHeader>
 
-                {/* Responsive Image */}
                 <Image
                     src={imgUrl}
                     alt={title}
@@ -48,46 +45,48 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
                     height={768}
                 />
 
-                <DialogDescription className="text-gray-700 dark:text-gray-300">
+                <div className="text-white">
                     <div dangerouslySetInnerHTML={{ __html: description }} />
-                </DialogDescription>
+                </div>
 
                 <div className="mt-4 flex space-x-4">
-                    {/* GitHub Button */}
                     {gitUrl ? (
                         <a
                             href={gitUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors"
+                            className="flex items-center px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-400 transition-colors"
                         >
                             <FaGithub className="mr-2" /> GitHub
                         </a>
                     ) : (
-                        <Button variant="ghost" disabled className="cursor-not-allowed opacity-50">
+                        <Button variant="ghost" disabled className="cursor-not-allowed opacity-50 text-gray-500">
                             <FaGithub className="mr-2" /> GitHub
                         </Button>
                     )}
 
-                    {/* Live Preview Button */}
                     {previewUrl ? (
                         <a
                             href={previewUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 transition-colors"
+                            className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400 transition-colors"
                         >
                             <FaExternalLinkAlt className="mr-2" /> Live Preview
                         </a>
                     ) : (
-                        <Button variant="ghost" disabled className="cursor-not-allowed opacity-50">
+                        <Button variant="ghost" disabled className="cursor-not-allowed opacity-50 text-gray-500">
                             <FaExternalLinkAlt className="mr-2" /> Live Preview
                         </Button>
                     )}
                 </div>
 
                 <div className="mt-6 flex justify-end">
-                    <Button variant="secondary" onClick={onClose}>
+                    <Button
+                        variant="secondary"
+                        onClick={onClose}
+                        className="bg-gray-700 text-white hover:bg-gray-600"
+                    >
                         Close
                     </Button>
                 </div>

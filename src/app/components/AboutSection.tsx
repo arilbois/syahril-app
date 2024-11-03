@@ -17,7 +17,7 @@ import {
 } from "./types";
 
 const fetchAboutMe = async (): Promise<APIResponse<AboutMe>> => {
-  const { data } = await api.get('/about-me');
+  const { data } = await api.get('/about-me/1');
   return data;
 };
 

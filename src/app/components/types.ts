@@ -33,8 +33,8 @@ export interface Project {
     title: string;
     description: string;
     image: string;
-    gitUrl: string;
-    previewUrl: string;
+    git_url: string;
+    preview_url: string;
     tag: string[];
 }
 

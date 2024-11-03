@@ -6,6 +6,7 @@ export interface Skill {
     id: number;
     name: string;
     skill_type: string;
+    level: string;
 }
 
 export interface Education {
@@ -43,4 +44,13 @@ export interface APIResponse<T> {
     data: T;
     message?: string;
     status?: number;
+}
+
+export interface Experience {
+    id: number;
+    title: string;
+    company: string;
+    start_date: string;
+    end_date: string | null;
+    description: string;
 }

@@ -1,21 +1,24 @@
-// src/components/AboutSection.tsx
-
 "use client";
 
-import React, { useTransition, useState } from "react";
-import Image from "next/image";
-import TabButton from "./TabButton";
+import React from "react";
 import { useQuery } from "react-query";
-import { decode } from 'html-entities';
+import { decode } from "html-entities";
 import api from "@/services/axios";
 import {
   AboutMe,
   Skill,
-  Education,
+  Experience,
   Certification,
   APIResponse
 } from "./types";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/ui/tabs";
 
+// Fetch functions
 const fetchAboutMe = async (): Promise<APIResponse<AboutMe>> => {
   const { data } = await api.get('/about-me/1');
   return data;
@@ -31,8 +34,8 @@ const fetchHardSkills = async (): Promise<APIResponse<Skill[]>> => {
   return data;
 };
 
-const fetchEducations = async (): Promise<APIResponse<Education[]>> => {
-  const { data } = await api.get('/educations');
+const fetchExperiences = async (): Promise<APIResponse<Experience[]>> => {
+  const { data } = await api.get('/experiences');
   return data;
 };
 
@@ -42,31 +45,13 @@ const fetchCertifications = async (): Promise<APIResponse<Certification[]>> => {
 };
 
 const AboutSection: React.FC = () => {
-  const [tab, setTab] = useState<"hardSkills" | "softSkills" | "education" | "certifications">("hardSkills");
-  const [, startTransition] = useTransition();
-
-  // Fetching data using react-query
   const { data: aboutMe, isLoading: aboutMeLoading, error: aboutMeError } = useQuery<APIResponse<AboutMe>, Error>('aboutMe', fetchAboutMe);
   const { data: hardSkills, isLoading: hardSkillsLoading, error: hardSkillsError } = useQuery<APIResponse<Skill[]>, Error>('hardSkills', fetchHardSkills);
   const { data: softSkills, isLoading: softSkillsLoading, error: softSkillsError } = useQuery<APIResponse<Skill[]>, Error>('softSkills', fetchSoftSkills);
-  const { data: educations, isLoading: educationsLoading, error: educationsError } = useQuery<APIResponse<Education[]>, Error>('educations', fetchEducations);
+  const { data: experiences, isLoading: experiencesLoading, error: experiencesError } = useQuery<APIResponse<Experience[]>, Error>('experiences', fetchExperiences);
   const { data: certifications, isLoading: certificationsLoading, error: certificationsError } = useQuery<APIResponse<Certification[]>, Error>('certifications', fetchCertifications);
 
-  // Handle tab change
-  const handleTabChange = (id: "hardSkills" | "softSkills" | "education" | "certifications") => {
-    startTransition(() => {
-      setTab(id);
-    });
-  };
-
-  // Handle loading states
-  if (
-    aboutMeLoading ||
-    hardSkillsLoading ||
-    softSkillsLoading ||
-    educationsLoading ||
-    certificationsLoading
-  ) {
+  if (aboutMeLoading || hardSkillsLoading || softSkillsLoading || experiencesLoading || certificationsLoading) {
     return (
       <section className="text-white" id="about">
         <div className="flex justify-center items-center py-20">
@@ -76,14 +61,7 @@ const AboutSection: React.FC = () => {
     );
   }
 
-  // Handle error states
-  if (
-    aboutMeError ||
-    hardSkillsError ||
-    softSkillsError ||
-    educationsError ||
-    certificationsError
-  ) {
+  if (aboutMeError || hardSkillsError || softSkillsError || experiencesError || certificationsError) {
     return (
       <section className="text-white" id="about">
         <div className="flex justify-center items-center py-20">
@@ -93,112 +71,96 @@ const AboutSection: React.FC = () => {
     );
   }
 
-  // Render content based on active tab
-  const renderContent = () => {
-    switch (tab) {
-      case "hardSkills":
-        return (
-          <ul className="list-disc pl-5">
-            {hardSkills?.data.map((skill: Skill) => (
-              <li key={skill.id}>{skill.name}</li>
-            ))}
-          </ul>
-        );
-      case "softSkills":
-        return (
-          <ul className="list-disc pl-5">
-            {softSkills?.data.map((skill: Skill) => (
-              <li key={skill.id}>{skill.name}</li>
-            ))}
-          </ul>
-        );
-      case "education":
-        return (
-          <ul className="list-disc pl-5">
-            {educations?.data.map((edu: Education) => (
-              <li key={edu.id}>
-                <strong>{edu.institution}</strong> - {edu.degree} in {edu.field} (
-                {edu.start_date} - {edu.end_date})
-                {edu.description && <p className="mt-1">{edu.description}</p>}
-              </li>
-            ))}
-          </ul>
-        );
-      case "certifications":
-        return (
-          <ul className="list-disc pl-5">
-            {certifications?.data.map((cert: Certification) => (
-              <li key={cert.id}>
-                {cert.link ? (
-                  <a
-                    href={cert.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-400 underline"
-                  >
-                    {cert.name}
-                  </a>
-                ) : (
-                  cert.name
-                )}{" "}
-                - {cert.issuer}
-                <p className="mt-1">{cert.description}</p>
-              </li>
-            ))}
-          </ul>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
-    <section className="text-white bg-gray-800" id="about">
-      <div className="md:grid md:grid-cols-2 gap-8 items-center py-16 px-4 xl:gap-16 sm:py-24 xl:px-16">
-        <div className="flex justify-center">
-          <Image
-            src="/images/about-image.png" // Ensure this image exists in your public/images directory
-            width={500}
-            height={500}
-            alt="About image"
-            className="rounded-lg"
-          />
-        </div>
-        <div className="mt-8 md:mt-0 text-left flex flex-col h-full">
-          <h2 className="text-4xl font-bold mb-4">About Me</h2>
-          <p className="text-base lg:text-lg mb-6">
-            {aboutMe?.data?.description
-              ? decode(aboutMe.data.description)
-              : "Description not available."}
-          </p>
-          <div className="flex flex-wrap gap-4 mt-4">
-            <TabButton
-              selectTab={() => handleTabChange("hardSkills")}
-              active={tab === "hardSkills"}
-            >
-              Hard Skills
-            </TabButton>
-            <TabButton
-              selectTab={() => handleTabChange("softSkills")}
-              active={tab === "softSkills"}
-            >
-              Soft Skills
-            </TabButton>
-            <TabButton
-              selectTab={() => handleTabChange("education")}
-              active={tab === "education"}
-            >
-              Education
-            </TabButton>
-            <TabButton
-              selectTab={() => handleTabChange("certifications")}
-              active={tab === "certifications"}
-            >
-              Certifications
-            </TabButton>
+    <section className="text-white bg-black" id="about">
+      <div className="max-w-5xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Left Column: About Me */}
+          <div className="flex flex-col justify-start">
+            <h2 className="text-4xl font-bold mb-4">About Me</h2>
+            <p className="text-base lg:text-lg">
+              {aboutMe?.data?.description ? decode(aboutMe.data.description) : "Description not available."}
+            </p>
           </div>
-          <div className="mt-8">
-            {renderContent()}
+
+          {/* Right Column: Tabs */}
+          <div className="flex flex-col">
+            <Tabs defaultValue="skills" className="w-full">
+              <TabsList className="flex space-x-1 rounded-md bg-gray-700 p-1">
+                <TabsTrigger value="skills" className="flex-1 text-center">Skills</TabsTrigger>
+                <TabsTrigger value="experience" className="flex-1 text-center">Experience</TabsTrigger>
+                <TabsTrigger value="certifications" className="flex-1 text-center">Certifications</TabsTrigger>
+              </TabsList>
+
+              {/* Skills Tab */}
+              <TabsContent value="skills" className="mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Hard Skills Column */}
+                  <div>
+                    <h3 className="text-2xl font-semibold mb-2">Hard Skills</h3>
+                    <ul className="list-disc pl-5 space-y-2">
+                      {hardSkills?.data.map((skill: Skill) => (
+                        <li key={skill.id}>
+                          {skill.name} - <span className="italic">{skill.level}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Soft Skills Column */}
+                  <div>
+                    <h3 className="text-2xl font-semibold mb-2">Soft Skills</h3>
+                    <ul className="list-disc pl-5 space-y-2">
+                      {softSkills?.data.map((skill: Skill) => (
+                        <li key={skill.id}>{skill.name}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Experience Tab with Timeline Style */}
+              <TabsContent value="experience" className="mt-4">
+                <div className="relative border-l border-gray-200 dark:border-gray-700 ml-6">
+                  {experiences?.data.map((exp, index) => (
+                    <div key={exp.id} className="mb-10 ml-6 flex items-start relative">
+                      <span
+                        className={`absolute w-6 h-6 rounded-full -left-9 border-2 ${index === 0 ? "border-orange-500 bg-black" : "bg-black border-gray-500"
+                          }`}
+                      />
+                      <div className="ml-4">
+                        <h3 className="text-lg font-semibold text-white">{exp.title} at {exp.company}</h3>
+                        <p className="text-sm text-gray-500">
+                          {new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric' }).format(new Date(exp.start_date))} -
+                          {exp.end_date ? new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric' }).format(new Date(exp.end_date)) : "Present"}
+                        </p>
+                        <p className="mt-2 text-base text-gray-300">{exp.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+
+
+              {/* Certifications Tab */}
+              <TabsContent value="certifications" className="mt-4">
+                <ul className="list-disc pl-5 space-y-4">
+                  {certifications?.data.map((cert: Certification) => (
+                    <li key={cert.id}>
+                      {cert.link ? (
+                        <a href={cert.link} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">
+                          {cert.name}
+                        </a>
+                      ) : (
+                        cert.name
+                      )}
+                      {" - "}{cert.issuer}
+                      <p className="mt-1">{cert.description}</p>
+                    </li>
+                  ))}
+                </ul>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>

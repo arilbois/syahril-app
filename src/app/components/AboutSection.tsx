@@ -73,8 +73,8 @@ const AboutSection: React.FC = () => {
 
   return (
     <section className="text-white bg-black" id="about">
-      <div className="max-w-5xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 justify-between">
           {/* Left Column: About Me */}
           <div className="flex flex-col justify-start">
             <h2 className="text-4xl font-bold mb-4">About Me</h2>
